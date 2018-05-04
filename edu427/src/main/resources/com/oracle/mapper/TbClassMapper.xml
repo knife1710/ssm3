@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oracle.dao.TbClassMapper">
+	<resultMap id="BaseResultMap" type="com.oracle.vo.TbClass">
+		<id column="CLASSID" jdbcType="INTEGER" property="classid" />
+		<result column="CLASSNAME" jdbcType="VARCHAR"
+			property="classname" />
+		<result column="classTypeId" jdbcType="INTEGER"
+			property="classtypeid" />
+		<result column="TEACHERID" jdbcType="INTEGER"
+			property="teacherid" />
+		<result column="CLASS_GUIDEID" jdbcType="INTEGER"
+			property="classGuideid" />
+		<result column="JOB_GUIDEID" jdbcType="INTEGER"
+			property="jobGuideid" />
+		<result column="CreatedDate" jdbcType="DATE"
+			property="createddate" />
+		<result column="EndDate" jdbcType="DATE" property="enddate" />
+		<result column="stateId" jdbcType="INTEGER" property="stateid" />
+		<result column="COMMENT" jdbcType="VARCHAR" property="comment" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" prefixOverrides="and" suffix=")">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach close=")" collection="criterion.value"
+										item="listItem" open="(" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" prefixOverrides="and" suffix=")">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach close=")" collection="criterion.value"
+										item="listItem" open="(" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		CLASSID, CLASSNAME, classTypeId, TEACHERID, CLASS_GUIDEID, JOB_GUIDEID,
+		CreatedDate,
+		EndDate, stateId, COMMENT
+	</sql>
+
+	<select id="selectAll" resultType="map">
+		select c.*,s.STATENAME classtype ,t.name teachername,
+		cg.name classguideName,jg.name jobguideName,cs.STATENAME state
+		from tb_class c left JOIN tb_state s
+		on c.classTypeId=s.STATEID LEFT JOIN tb_teacher t
+		on c.TEACHERID=t.teacherId left join tb_guide cg
+		on c.CLASS_GUIDEID=cg.GUIDEID left join tb_guide jg
+		on c.JOB_GUIDEID=jg.GUIDEID left join tb_state cs
+		on c.stateId=cs.STATEID order by createdDate desc
+
+	</select>
+
+
+
+	<select id="selectByExample"
+		parameterType="com.oracle.vo.TbClassExample" resultMap="BaseResultMap">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from tb_class
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+
+
+
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_class
+		where CLASSID = #{classid,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from tb_class
+		where CLASSID = #{classid,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.oracle.vo.TbClassExample">
+		delete from tb_class
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.oracle.vo.TbClass"
+		useGeneratedKeys="true" keyProperty="classid">
+		insert into tb_class (CLASSID, CLASSNAME, classTypeId,
+		TEACHERID, CLASS_GUIDEID, JOB_GUIDEID,
+		CreatedDate, EndDate, stateId,
+		COMMENT)
+		values (null, #{classname,jdbcType=VARCHAR},
+		#{classtypeid,jdbcType=INTEGER},
+		#{teacherid,jdbcType=INTEGER}, #{classGuideid,jdbcType=INTEGER}, #{jobGuideid,jdbcType=INTEGER},
+		#{createddate,jdbcType=DATE}, #{enddate,jdbcType=DATE},
+		#{stateid,jdbcType=INTEGER},
+		#{comment,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.oracle.vo.TbClass">
+		insert into tb_class
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="classid != null">
+				CLASSID,
+			</if>
+			<if test="classname != null">
+				CLASSNAME,
+			</if>
+			<if test="classtypeid != null">
+				classTypeId,
+			</if>
+			<if test="teacherid != null">
+				TEACHERID,
+			</if>
+			<if test="classGuideid != null">
+				CLASS_GUIDEID,
+			</if>
+			<if test="jobGuideid != null">
+				JOB_GUIDEID,
+			</if>
+			<if test="createddate != null">
+				CreatedDate,
+			</if>
+			<if test="enddate != null">
+				EndDate,
+			</if>
+			<if test="stateid != null">
+				stateId,
+			</if>
+			<if test="comment != null">
+				COMMENT,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="classid != null">
+				#{classid,jdbcType=INTEGER},
+			</if>
+			<if test="classname != null">
+				#{classname,jdbcType=VARCHAR},
+			</if>
+			<if test="classtypeid != null">
+				#{classtypeid,jdbcType=INTEGER},
+			</if>
+			<if test="teacherid != null">
+				#{teacherid,jdbcType=INTEGER},
+			</if>
+			<if test="classGuideid != null">
+				#{classGuideid,jdbcType=INTEGER},
+			</if>
+			<if test="jobGuideid != null">
+				#{jobGuideid,jdbcType=INTEGER},
+			</if>
+			<if test="createddate != null">
+				#{createddate,jdbcType=DATE},
+			</if>
+			<if test="enddate != null">
+				#{enddate,jdbcType=DATE},
+			</if>
+			<if test="stateid != null">
+				#{stateid,jdbcType=INTEGER},
+			</if>
+			<if test="comment != null">
+				#{comment,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.oracle.vo.TbClassExample"
+		resultType="java.lang.Long">
+		select count(*) from tb_class
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update tb_class
+		<set>
+			<if test="record.classid != null">
+				CLASSID = #{record.classid,jdbcType=INTEGER},
+			</if>
+			<if test="record.classname != null">
+				CLASSNAME = #{record.classname,jdbcType=VARCHAR},
+			</if>
+			<if test="record.classtypeid != null">
+				classTypeId = #{record.classtypeid,jdbcType=INTEGER},
+			</if>
+			<if test="record.teacherid != null">
+				TEACHERID = #{record.teacherid,jdbcType=INTEGER},
+			</if>
+			<if test="record.classGuideid != null">
+				CLASS_GUIDEID = #{record.classGuideid,jdbcType=INTEGER},
+			</if>
+			<if test="record.jobGuideid != null">
+				JOB_GUIDEID = #{record.jobGuideid,jdbcType=INTEGER},
+			</if>
+			<if test="record.createddate != null">
+				CreatedDate = #{record.createddate,jdbcType=DATE},
+			</if>
+			<if test="record.enddate != null">
+				EndDate = #{record.enddate,jdbcType=DATE},
+			</if>
+			<if test="record.stateid != null">
+				stateId = #{record.stateid,jdbcType=INTEGER},
+			</if>
+			<if test="record.comment != null">
+				COMMENT = #{record.comment,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update tb_class
+		set CLASSID = #{record.classid,jdbcType=INTEGER},
+		CLASSNAME = #{record.classname,jdbcType=VARCHAR},
+		classTypeId = #{record.classtypeid,jdbcType=INTEGER},
+		TEACHERID = #{record.teacherid,jdbcType=INTEGER},
+		CLASS_GUIDEID = #{record.classGuideid,jdbcType=INTEGER},
+		JOB_GUIDEID = #{record.jobGuideid,jdbcType=INTEGER},
+		CreatedDate = #{record.createddate,jdbcType=DATE},
+		EndDate = #{record.enddate,jdbcType=DATE},
+		stateId = #{record.stateid,jdbcType=INTEGER},
+		COMMENT = #{record.comment,jdbcType=VARCHAR}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.oracle.vo.TbClass">
+		update tb_class
+		<set>
+			<if test="classname != null">
+				CLASSNAME = #{classname,jdbcType=VARCHAR},
+			</if>
+			<if test="classtypeid != null">
+				classTypeId = #{classtypeid,jdbcType=INTEGER},
+			</if>
+			<if test="teacherid != null">
+				TEACHERID = #{teacherid,jdbcType=INTEGER},
+			</if>
+			<if test="classGuideid != null">
+				CLASS_GUIDEID = #{classGuideid,jdbcType=INTEGER},
+			</if>
+			<if test="jobGuideid != null">
+				JOB_GUIDEID = #{jobGuideid,jdbcType=INTEGER},
+			</if>
+			<if test="createddate != null">
+				CreatedDate = #{createddate,jdbcType=DATE},
+			</if>
+			<if test="enddate != null">
+				EndDate = #{enddate,jdbcType=DATE},
+			</if>
+			<if test="stateid != null">
+				stateId = #{stateid,jdbcType=INTEGER},
+			</if>
+			<if test="comment != null">
+				COMMENT = #{comment,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where CLASSID = #{classid,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.oracle.vo.TbClass">
+		update tb_class
+		set CLASSNAME = #{classname,jdbcType=VARCHAR},
+		classTypeId = #{classtypeid,jdbcType=INTEGER},
+		TEACHERID = #{teacherid,jdbcType=INTEGER},
+		CLASS_GUIDEID = #{classGuideid,jdbcType=INTEGER},
+		JOB_GUIDEID = #{jobGuideid,jdbcType=INTEGER},
+		CreatedDate = #{createddate,jdbcType=DATE},
+		EndDate = #{enddate,jdbcType=DATE},
+		stateId = #{stateid,jdbcType=INTEGER},
+		COMMENT = #{comment,jdbcType=VARCHAR}
+		where CLASSID = #{classid,jdbcType=INTEGER}
+	</update>
+</mapper>
